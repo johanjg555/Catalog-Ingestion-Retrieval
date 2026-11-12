@@ -17,8 +17,9 @@ logger = get_logger(__name__)
 
 
 csv_result_backend = RedisAsyncResultBackend("redis://localhost:6379/0")
-rag_result_backend = RedisAsyncResultBackend("redis://localhost:6379/1")
 
+
+rag_result_backend = RedisAsyncResultBackend("redis://localhost:6379/1")
 
 
 broker = AioPikaBroker(
@@ -28,11 +29,12 @@ broker = AioPikaBroker(
 
 
 
+
+
 rag_broker = AioPikaBroker(
     "amqp://guest:guest@localhost:5672",
     queue_name="rag_chunk"
 ).with_result_backend(rag_result_backend)
-
 
 
 
@@ -49,6 +51,8 @@ async def startup(state: TaskiqState) -> None:
 async def shutdown(state: TaskiqState) -> None:
     await state.db.disconnect()
     logger.info("broker_stopped")
+
+
 
 
 #rag broker
