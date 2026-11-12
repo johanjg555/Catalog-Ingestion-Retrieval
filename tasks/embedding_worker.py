@@ -123,12 +123,18 @@ async def embed_and_save_task(
         
                 batch_records = []
 
+                batch_end = i + SUB_BATCH_SIZE
+                batch_ids = valid_ids[i:batch_end]
+                batch_chunk_types = chunk_types[i:batch_end]
+                batch_contents = contents[i:batch_end]
+
                 for id_, c_type, content, dense, sparse in zip(
-                    valid_ids,
-                    chunk_types,
-                    contents,
+                    batch_ids,
+                    batch_chunk_types,
+                    batch_contents,
                     dense_embeddings,
                     sparse_embeddings,
+                    strict=True,
                 ):
                     
                     sparse_dict = dict(zip(sparse.indices.tolist(), sparse.values.tolist()))

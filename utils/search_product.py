@@ -42,9 +42,15 @@ async def get_eol_info(reranked_docs: list[str]):
     product_ids=set()
     eol_info=[]
     for content in reranked_docs:
-        start_index=content.find("SKU:")
-        end_index=content.find("Product Type")
-        sku=content[start_index+4:end_index].strip()
+        sku_line = next(
+            (line for line in content.splitlines() if line.startswith("SKU:")),
+            None,
+        )
+        if sku_line is None:
+            continue
+        sku = sku_line.partition(":")[2].strip()
+        if not sku:
+            continue
 
         if sku in product_ids:
             continue

@@ -24,6 +24,11 @@ async def fetch_missing_ids(
         SELECT s.id
         FROM sku_catalogue s
         WHERE s.id > $1
+          AND NOT EXISTS (
+              SELECT 1
+              FROM product_chunks pc
+              WHERE pc.product_id = s.id
+          )
         ORDER BY s.id
         LIMIT $2
         """,

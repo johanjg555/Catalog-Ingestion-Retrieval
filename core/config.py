@@ -1,5 +1,6 @@
 """Application settings loaded from environment variables."""
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
     log_file: str = "logs/app.log"
 
 
-    SECRET_KEY :str= "your-secret-key"
+    SECRET_KEY: str = Field(min_length=32)
     ALGORITHM :str= "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES :int= 1
     REFRESH_TOKEN_EXPIRE_MINUTES :int= 5

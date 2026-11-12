@@ -10,7 +10,7 @@ async def insert_csv_data(pool: asyncpg.Pool, data_buffer, has_header: bool = Fa
         try:
             logger.info("Starting COPY operation...")
             await conn.copy_to_table(
-                "csv_records", 
+                "sku_catalogue",
                 source=data_buffer, 
                 format='csv',
                 header=has_header,

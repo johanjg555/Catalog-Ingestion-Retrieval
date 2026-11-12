@@ -154,38 +154,27 @@ def chunk_product(product: dict) -> list[tuple[str, str]]:
     chunks = []
     
     # 1. Metadata Chunk (Small, fast to search)
-    power = "Not Available" if _is_empty(product.get("power_consumption")) else product.get("power_consumption")
-        
     metadata_fields = [
+        ("Product Name", product.get("name")),
         ("SKU", product.get("sku")),
-        ("Product Type", product.get("product_type")),
-        ("Power Consumption", power),
     ]
-    metadata_text = "\n".join(f"{k}: {v}" for k, v in metadata_fields if v)
+    metadata_text = "\n".join(
+        f"{key}: {value}"
+        for key, value in metadata_fields
+        if not _is_empty(value)
+    )
 
-    # 2. Specifications Chunk
-    spec_text = product.get("key_spec")
-    if not _is_empty(spec_text):
-        spec_chunks = splitter.chunks(spec_text)
-        for chunk in spec_chunks:
-            chunks.append(("specifications", metadata_text + "\n" + f"Key Specifications: {chunk}"))
-
-    # 3. Description Chunk
-    desc_text = product.get("item_description")
-    if not _is_empty(desc_text):
-        description_chunks = splitter.chunks(desc_text)
+    # 2. Description Chunk
+    description = product.get("description")
+    if not _is_empty(description):
+        description_chunks = splitter.chunks(description)
         for chunk in description_chunks:
-            chunks.append(("description", metadata_text + "\n" + f"Description: {chunk}"))
-    
-    # 4. Feature Enhancement Chunk
-    feature_enhancement_text = product.get("feature_enhancement")
-    if not _is_empty(feature_enhancement_text):
-        fe_chunks = splitter.chunks(feature_enhancement_text)
-        for chunk in fe_chunks:
-            chunks.append(("feature_enhancement", metadata_text + "\n" + f"Feature Enhancement: {chunk}"))
+            prefix = f"{metadata_text}\n" if metadata_text else ""
+            chunks.append(("description", f"{prefix}Description: {chunk}"))
+    elif metadata_text:
+        chunks.append(("metadata", metadata_text))
 
     return chunks
-
 
 
 
